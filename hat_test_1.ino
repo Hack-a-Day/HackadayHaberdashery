@@ -6,7 +6,7 @@ int incomingByte = 0;
 
 //Keep track of millis for loop execution
 uint32_t alarm;
-#define DELAY 80
+#define DELAY 180
 
 //Message state declarations and variable
 #define INCHAR 0
@@ -16,11 +16,12 @@ uint32_t alarm;
 uint8_t msgState = NEXTCHAR;
 
 //Message variables
-uint8_t msgLen = 5; // How many letters in the message (may not need this if zero terminated)
-uint8_t msgCustom[20] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
+uint8_t msgLen = 11; // How many letters in the message (may not need this if zero terminated)
+uint8_t msgCustom[] = { "Bacon Hello" }; //Stores the custom message (zero terminated)
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
 uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
+uint8_t clearIdx = 0;
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
@@ -148,7 +149,7 @@ static const char PROGMEM  font5x8[] = {
   0x00, 0x01, 0x02, 0x04, 0x00,// `
   0x20, 0x54, 0x54, 0x54, 0x78,// a
   0x7F, 0x48, 0x44, 0x44, 0x38,// b
-  0x38, 0x44, 0x44, 0x44, 0x20,// c
+  0x38, 0x44, 0x44, 0x44, 0x00,// c
   0x38, 0x44, 0x44, 0x48, 0x7F,// d
   0x38, 0x54, 0x54, 0x54, 0x18,// e
   0x08, 0x7E, 0x09, 0x01, 0x02,// f
@@ -270,6 +271,14 @@ void loop() {
       case COLCLEAR:
         //Are we clearing the display by columns?
         nextCol = 0;
+        if (clearIdx++ >= BUFFERLEN) {
+          //Reset all variables
+          msgIdx = 0; //Which letter are we on?
+          chrIdx = 0; //WHich column of this letter's font are we on?
+          nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
+          clearIdx = 0;
+          msgState = NEXTCHAR;
+        }
         break;
         
       default:
