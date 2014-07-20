@@ -16,7 +16,11 @@ uint32_t alarm;
 uint8_t msgState = NEXTCHAR;
 
 //Message variables
+boolean serialMsgReady = false;  //A message was received over serial
+boolean serialMsgScrolling = false; //A message received over serial is currently being displayed
+uint8_t serialMsgIdx = 0;
 uint8_t msgLen = 11; // How many letters in the message (may not need this if zero terminated)
+#define MSGCUSTOMARRAYLEN 11
 uint8_t msgCustom[] = { "Bacon Hello" }; //Stores the custom message (zero terminated)
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
@@ -224,9 +228,12 @@ void setup() {
 
 void loop() {
   //Some serial stuff for testing (will be used eventually)
+
   if (Serial.available() > 0) {
         // read the incoming byte:
         incomingByte = Serial.read();
+        
+        
 
         // say what you got:
         Serial.print("I received: ");
@@ -237,6 +244,16 @@ void loop() {
         Serial.println(chrBuf[2],HEX);
         Serial.println(chrBuf[3],HEX);
         Serial.println(chrBuf[4],HEX);
+        
+        //Only overwrite the message buffer if a serial message is not currently scrolling
+        if (!serialMsgScrolling) {
+          if (incomingByte == 10) {
+            //This is a newline character that terminates the string
+            serialMsgIdx = 0;
+          }
+          else { msgCustom[serialMsgIdx++] = incomingByte; }
+          if (serialMsgIdx >= MSGCUSTOMARRAYLEN) { serialMsgIdx = 0; }
+        }
   }
   
   if (millis() >= alarm) {
