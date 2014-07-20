@@ -20,8 +20,8 @@ boolean serialMsgReady = false;  //A message was received over serial
 boolean serialMsgScrolling = false; //A message received over serial is currently being displayed
 uint8_t serialMsgIdx = 0;
 uint8_t msgLen = 11; // How many letters in the message (may not need this if zero terminated)
-#define MSGCUSTOMARRAYLEN 11
-uint8_t msgCustom[] = { "Bacon Hello" }; //Stores the custom message (zero terminated)
+#define MSGCUSTOMARRAYLEN 20
+uint8_t msgCustom[MSGCUSTOMARRAYLEN] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
 uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
@@ -274,7 +274,7 @@ void loop() {
         
         //Change state on overflow
         if (chrIdx >= 5) {
-          if (msgIdx >= msgLen) { msgState = COLCLEAR; }
+          if ((msgIdx >= MSGCUSTOMARRAYLEN) || (msgCustom[msgIdx] == 0)) { msgState = COLCLEAR; }
           else { msgState = INSPACE; }
         }
         break;
