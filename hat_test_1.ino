@@ -8,6 +8,13 @@ int incomingByte = 0;
 uint32_t alarm;
 #define DELAY 80
 
+//Message state declarations and variable
+#define INCHAR 0
+#define INSPACE 1
+#define COLCLEAR 2
+#define NEXTCHAR 3
+uint8_t msgState = NEXTCHAR;
+
 //Message variables
 uint8_t msgLen = 5; // How many letters in the message (may not need this if zero terminated)
 uint8_t msgCustom[20] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
