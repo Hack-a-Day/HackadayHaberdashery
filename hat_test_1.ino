@@ -4,6 +4,10 @@
 
 int incomingByte = 0;
 
+//Keep track of millis for loop execution
+uint32_t alarm;
+#define DELAY 80
+
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
 uint32_t testColor = 0b00000000000011110000000000000000; //Red
@@ -198,6 +202,9 @@ void setup() {
   for (uint8_t i = 0; i<BUFFERLEN; i++) {
       buffer[i] = 0b00000000;
   }
+  
+  //Set the column shift timer for the first time
+  alarm = millis() + DELAY;
 }
 
 void loop() {
@@ -217,22 +224,24 @@ void loop() {
         Serial.println(chrBuf[4],HEX);
   }
   
-  //Latch from previous loop
-  latch();
-
-  //Shift the framebuffer
-  for (uint8_t i=BUFFERLEN-1; i>0; i--) {
-      buffer[i] = buffer[i-1];
+  if (millis() >= alarm) {
+  
+    //Latch from previous loop
+    latch();
+    
+    //Reset the alarm for next time
+    alarm = millis() + DELAY;
+  
+    //Shift the framebuffer
+    for (uint8_t i=BUFFERLEN-1; i>0; i--) {
+        buffer[i] = buffer[i-1];
+    }
+    //Fill the initial column
+    buffer[0] = rawString[colTracker];
+    //Increment the tracking
+    if (++colTracker >= rawLen) { colTracker = 0; }
+    pushColumn();
   }
-  //Fill the initial column
-  buffer[0] = rawString[colTracker];
-  //Increment the tracking
-  if (++colTracker >= rawLen) { colTracker = 0; }
-  pushColumn();
-
-  delay(80);
-
-
 }
 
 // Cascade a pixel down the row
