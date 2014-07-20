@@ -20,6 +20,7 @@ uint8_t msgLen = 5; // How many letters in the message (may not need this if zer
 uint8_t msgCustom[20] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
+uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
@@ -248,18 +249,50 @@ void loop() {
     //TODO: msgRepeat
     //TODO: Load message from RAM
     
-    //Are we in the middle of a character?
-    //Are we pushing space between two characters?
-    //Are we clearing the display by columns?
-    //Otherwise Increment message counter and check for overflow
-      //Start over if overflow
-    //Load next character from font
+    switch(msgState) {
+      case INCHAR:
+        //Are we in the middle of a character?
+        nextCol = chrBuf[chrIdx++];
+        
+        //Change state on overflow
+        if (chrIdx >= 5) {
+          if (msgIdx >= msgLen) { msgState = COLCLEAR; }
+          else { msgState = INSPACE; }
+        }
+        break;
+        
+      case INSPACE:
+        //Are we pushing space between two characters?
+        nextCol = 0;
+        msgState = NEXTCHAR;
+        break;
+        
+      case COLCLEAR:
+        //Are we clearing the display by columns?
+        nextCol = 0;
+        break;
+        
+      default:
+        //Otherwise go to the next letter
+        
+        //Load next character from font
+        readFont(msgCustom[msgIdx++]);
+        
+        //Set pixels to be pushed
+        nextCol = chrBuf[0];
+        
+        //Set character column index for next loop
+        chrIdx = 1;
+        
+        //Set state for next loop
+        msgState = INCHAR;
+    
     //Push next column of the character
     //Flag space between characters if we overflowed columns
-    
+    }
   
     //Shift all columns and add a new one to the beginning
-    pushColumn(rawString[colTracker]);
+    pushColumn(nextCol);
     
     //Increment the tracking
     if (++colTracker >= rawLen) { colTracker = 0; }
