@@ -228,24 +228,8 @@ void loop() {
   buffer[0] = rawString[colTracker];
   //Increment the tracking
   if (++colTracker >= rawLen) { colTracker = 0; }
+  pushColumn();
 
-  //push data to pixels (will latch next loop)
-  for (uint8_t i=0; i<BUFFERLEN; i++) {
-      if (1<<0 & buffer[i]) { strip0.setPixelColor(i,testColor); }
-      else { strip0.setPixelColor(i,0); }
-      if (1<<1 & buffer[i]) { strip1.setPixelColor(i,testColor); }
-      else { strip1.setPixelColor(i,0); }
-      if (1<<2 & buffer[i]) { strip2.setPixelColor(i,testColor); }
-      else { strip2.setPixelColor(i,0); }
-      if (1<<3 & buffer[i]) { strip3.setPixelColor(i,testColor); }
-      else { strip3.setPixelColor(i,0); }
-      if (1<<4 & buffer[i]) { strip4.setPixelColor(i,testColor); }
-      else { strip4.setPixelColor(i,0); }
-      if (1<<5 & buffer[i]) { strip5.setPixelColor(i,testColor); }
-      else { strip5.setPixelColor(i,0); }
-      if (1<<6 & buffer[i]) { strip6.setPixelColor(i,testColor); }
-      else { strip6.setPixelColor(i,0); }
-  }
   delay(80);
 
 
@@ -282,6 +266,26 @@ void readFont(uint8_t letter) {
   chrBuf[2] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 2);
   chrBuf[3] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 3);
   chrBuf[4] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 4);
+}
+
+void pushColumn(void) {
+   //push data to pixels (will latch next loop)
+  for (uint8_t i=0; i<BUFFERLEN; i++) {
+      if (1<<0 & buffer[i]) { strip0.setPixelColor(i,testColor); }
+      else { strip0.setPixelColor(i,0); }
+      if (1<<1 & buffer[i]) { strip1.setPixelColor(i,testColor); }
+      else { strip1.setPixelColor(i,0); }
+      if (1<<2 & buffer[i]) { strip2.setPixelColor(i,testColor); }
+      else { strip2.setPixelColor(i,0); }
+      if (1<<3 & buffer[i]) { strip3.setPixelColor(i,testColor); }
+      else { strip3.setPixelColor(i,0); }
+      if (1<<4 & buffer[i]) { strip4.setPixelColor(i,testColor); }
+      else { strip4.setPixelColor(i,0); }
+      if (1<<5 & buffer[i]) { strip5.setPixelColor(i,testColor); }
+      else { strip5.setPixelColor(i,0); }
+      if (1<<6 & buffer[i]) { strip6.setPixelColor(i,testColor); }
+      else { strip6.setPixelColor(i,0); }
+  } 
 }
 
 
