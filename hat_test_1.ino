@@ -8,6 +8,12 @@ int incomingByte = 0;
 uint32_t alarm;
 #define DELAY 80
 
+//Message variables
+uint8_t msgLen = 5; // How many letters in the message (may not need this if zero terminated)
+uint8_t msgCustom[20] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
+uint8_t msgIdx = 0; //Which letter are we on?
+uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
+
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
 uint32_t testColor = 0b00000000000011110000000000000000; //Red
@@ -231,6 +237,10 @@ void loop() {
     
     //Reset the alarm for next time
     alarm = millis() + DELAY;
+    
+    //TODO: msgRepeat
+    //TODO: Load message from RAM
+    
   
     //Shift all columns and add a new one to the beginning
     pushColumn(rawString[colTracker]);
