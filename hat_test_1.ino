@@ -241,6 +241,15 @@ void loop() {
     //TODO: msgRepeat
     //TODO: Load message from RAM
     
+    //Are we in the middle of a character?
+    //Are we pushing space between two characters?
+    //Are we clearing the display by columns?
+    //Otherwise Increment message counter and check for overflow
+      //Start over if overflow
+    //Load next character from font
+    //Push next column of the character
+    //Flag space between characters if we overflowed columns
+    
   
     //Shift all columns and add a new one to the beginning
     pushColumn(rawString[colTracker]);
