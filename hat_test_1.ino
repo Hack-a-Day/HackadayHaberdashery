@@ -182,20 +182,17 @@ Adafruit_NeoPixel strip6 = Adafruit_NeoPixel(35, 14, NEO_GRB + NEO_KHZ800);
 void setup() {
   Serial.begin(9600);
   
+  //initialize strips
   strip0.begin();
-  strip0.show(); // Initialize all pixels to 'off'
   strip1.begin();
-  strip1.show(); // Initialize all pixels to 'off'
   strip2.begin();
-  strip2.show(); // Initialize all pixels to 'off'
   strip3.begin();
-  strip3.show(); // Initialize all pixels to 'off'
   strip4.begin();
-  strip4.show(); // Initialize all pixels to 'off'
   strip5.begin();
-  strip5.show(); // Initialize all pixels to 'off'
   strip6.begin();
-  strip6.show(); // Initialize all pixels to 'off'  
+  
+  //Latch strips
+  latch();
   
   //fill buffer with nothing
   for (uint8_t i = 0; i<BUFFERLEN; i++) {
@@ -221,14 +218,7 @@ void loop() {
   //Serial.println("Hello world!");
   // Some example procedures showing how to display to the pixels:
   
-  //Latch from the last loop:
-  strip0.show();
-  strip1.show();
-  strip2.show();
-  strip3.show();
-  strip4.show();
-  strip5.show();
-  strip6.show();
+  latch();
 
   //Shift the framebuffer
   for (uint8_t i=BUFFERLEN-1; i>0; i--) {
@@ -271,6 +261,17 @@ void cascade(Adafruit_NeoPixel strip, uint32_t c, uint8_t wait) {
   }
 }
 
+void latch(void) {
+  //Latch all strips:
+  strip0.show();
+  strip1.show();
+  strip2.show();
+  strip3.show();
+  strip4.show();
+  strip5.show();
+  strip6.show();
+}
+
 void readFont(uint8_t letter) {
   //Filter for invalid
   if ((letter < 32) || (letter > 127)) { return; }
@@ -280,7 +281,7 @@ void readFont(uint8_t letter) {
   chrBuf[1] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 1);
   chrBuf[2] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 2);
   chrBuf[3] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 3);
-  chrBuf[3] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 4);
+  chrBuf[4] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 4);
 }
 
 
