@@ -232,15 +232,12 @@ void loop() {
     //Reset the alarm for next time
     alarm = millis() + DELAY;
   
-    //Shift the framebuffer
-    for (uint8_t i=BUFFERLEN-1; i>0; i--) {
-        buffer[i] = buffer[i-1];
-    }
-    //Fill the initial column
-    buffer[0] = rawString[colTracker];
+    //Shift all columns and add a new one to the beginning
+    pushColumn(rawString[colTracker]);
+    
     //Increment the tracking
     if (++colTracker >= rawLen) { colTracker = 0; }
-    pushColumn();
+
   }
 }
 
@@ -277,7 +274,16 @@ void readFont(uint8_t letter) {
   chrBuf[4] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 4);
 }
 
-void pushColumn(void) {
+void pushColumn(uint8_t newColumn) {
+  
+  //Shift the framebuffer
+  for (uint8_t i=BUFFERLEN-1; i>0; i--) {
+      buffer[i] = buffer[i-1];
+  }
+  
+  //Fill the initial column
+  buffer[0] = newColumn;
+  
    //push data to pixels (will latch next loop)
   for (uint8_t i=0; i<BUFFERLEN; i++) {
       if (1<<0 & buffer[i]) { strip0.setPixelColor(i,testColor); }
