@@ -201,6 +201,7 @@ void setup() {
 }
 
 void loop() {
+  //Some serial stuff for testing (will be used eventually)
   if (Serial.available() > 0) {
         // read the incoming byte:
         incomingByte = Serial.read();
@@ -215,9 +216,8 @@ void loop() {
         Serial.println(chrBuf[3],HEX);
         Serial.println(chrBuf[4],HEX);
   }
-  //Serial.println("Hello world!");
-  // Some example procedures showing how to display to the pixels:
   
+  //Latch from previous loop
   latch();
 
   //Shift the framebuffer
