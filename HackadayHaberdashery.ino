@@ -32,7 +32,9 @@ uint8_t clearIdx = 0;
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
-uint32_t testColor = 0b00000000001111110000000000000000; //Red
+#define STOCKCOLOR 0b00000000001111110000000000000000
+#define CUSTOMCOLOR 0b00000000000000000011111100000000
+uint32_t curColor = STOCKCOLOR;
 
 uint8_t colTracker = 0;
 uint8_t rawLen = 48;
@@ -314,6 +316,8 @@ void loop() {
         //Check for custom message
         if (msgIdx == 0) {
           if (serialMsgReady) {
+            //Change message color
+            curColor = CUSTOMCOLOR;
             //Copy serial message into message buffer
             for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
               msgBuffer[i] = msgCustom[i];
@@ -327,7 +331,9 @@ void loop() {
               msgBuffer[0] = 88;
               msgBuffer[1] = 0;
               serialMsgScrolling = false;
-                //TODO: Load message from RAM
+              //Reset Color
+              curColor = STOCKCOLOR;
+              //TODO: Load message from RAM
             }
           }
         }
@@ -401,19 +407,19 @@ void pushColumn(uint8_t newColumn) {
   
    //push data to pixels (will latch next loop)
   for (uint8_t i=0; i<BUFFERLEN; i++) {
-      if (1<<0 & buffer[i]) { strip0.setPixelColor(i,testColor); }
+      if (1<<0 & buffer[i]) { strip0.setPixelColor(i,curColor); }
       else { strip0.setPixelColor(i,0); }
-      if (1<<1 & buffer[i]) { strip1.setPixelColor(i,testColor); }
+      if (1<<1 & buffer[i]) { strip1.setPixelColor(i,curColor); }
       else { strip1.setPixelColor(i,0); }
-      if (1<<2 & buffer[i]) { strip2.setPixelColor(i,testColor); }
+      if (1<<2 & buffer[i]) { strip2.setPixelColor(i,curColor); }
       else { strip2.setPixelColor(i,0); }
-      if (1<<3 & buffer[i]) { strip3.setPixelColor(i,testColor); }
+      if (1<<3 & buffer[i]) { strip3.setPixelColor(i,curColor); }
       else { strip3.setPixelColor(i,0); }
-      if (1<<4 & buffer[i]) { strip4.setPixelColor(i,testColor); }
+      if (1<<4 & buffer[i]) { strip4.setPixelColor(i,curColor); }
       else { strip4.setPixelColor(i,0); }
-      if (1<<5 & buffer[i]) { strip5.setPixelColor(i,testColor); }
+      if (1<<5 & buffer[i]) { strip5.setPixelColor(i,curColor); }
       else { strip5.setPixelColor(i,0); }
-      if (1<<6 & buffer[i]) { strip6.setPixelColor(i,testColor); }
+      if (1<<6 & buffer[i]) { strip6.setPixelColor(i,curColor); }
       else { strip6.setPixelColor(i,0); }
   } 
 }
