@@ -250,7 +250,7 @@ void loop() {
           if (incomingByte == 10) {
             //This is a newline character that terminates the string
             //Have a zero added to the array by resetting value of incomingByte to 0
-            incomingByte = 0;
+            msgCustom[serialMsgIdx] = 0;
             //Reset index for next time
             serialMsgIdx = 0;
           }
