@@ -14,6 +14,8 @@ uint32_t alarm;
 #define COLCLEAR 2
 #define NEXTCHAR 3
 uint8_t msgState = NEXTCHAR;
+#define STANDARDREPEAT 3
+uint8_t msgRepeat = 0;
 
 //Message variables
 boolean serialMsgReady = false;  //A message was received over serial
@@ -21,7 +23,8 @@ boolean serialMsgScrolling = false; //A message received over serial is currentl
 uint8_t serialMsgIdx = 0;
 uint8_t msgLen = 11; // How many letters in the message (may not need this if zero terminated)
 #define MSGCUSTOMARRAYLEN 20
-uint8_t msgCustom[MSGCUSTOMARRAYLEN] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the custom message (zero terminated)
+uint8_t msgBuffer[MSGCUSTOMARRAYLEN] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the currently scrolling message (zero terminated)
+uint8_t msgCustom[MSGCUSTOMARRAYLEN] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }; //Stores incoming custom messages
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
 uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
@@ -253,6 +256,8 @@ void loop() {
             msgCustom[serialMsgIdx] = 0;
             //Reset index for next time
             serialMsgIdx = 0;
+            //Flag that a message is ready
+            serialMsgReady = true;
           }
           else { msgCustom[serialMsgIdx++] = incomingByte; }
           
@@ -270,7 +275,7 @@ void loop() {
     alarm = millis() + DELAY;
     
     //TODO: msgRepeat
-    //TODO: Load message from RAM
+
     
     switch(msgState) {
       case INCHAR:
@@ -279,7 +284,7 @@ void loop() {
         
         //Change state on overflow
         if (chrIdx >= 5) {
-          if ((msgIdx >= MSGCUSTOMARRAYLEN) || (msgCustom[msgIdx] == 0)) { msgState = COLCLEAR; }
+          if ((msgIdx >= MSGCUSTOMARRAYLEN) || (msgBuffer[msgIdx] == 0)) { msgState = COLCLEAR; }
           else { msgState = INSPACE; }
         }
         break;
@@ -306,8 +311,29 @@ void loop() {
       default:
         //Otherwise go to the next letter
         
+        //Check for custom message
+        if (msgIdx == 0) {
+          if (serialMsgReady) {
+            //Copy serial message into message buffer
+            for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
+              msgBuffer[i] = msgCustom[i];
+            }
+            msgRepeat = STANDARDREPEAT;
+            serialMsgScrolling = true;
+            serialMsgReady = false;
+          }
+          else if (serialMsgScrolling) {
+            if (msgRepeat-- == 0) {
+              msgBuffer[0] = 88;
+              msgBuffer[1] = 0;
+              serialMsgScrolling = false;
+                //TODO: Load message from RAM
+            }
+          }
+        }
+        
         //Load next character from font
-        readFont(msgCustom[msgIdx++]);
+        readFont(msgBuffer[msgIdx++]);
         
         //Set pixels to be pushed
         nextCol = chrBuf[0];
@@ -318,8 +344,7 @@ void loop() {
         //Set state for next loop
         msgState = INCHAR;
     
-    //Push next column of the character
-    //Flag space between characters if we overflowed columns
+
     }
   
     //Shift all columns and add a new one to the beginning
