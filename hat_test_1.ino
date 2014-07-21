@@ -6,7 +6,7 @@ int incomingByte = 0;
 
 //Keep track of millis for loop execution
 uint32_t alarm;
-#define DELAY 180
+#define DELAY 80
 
 //Message state declarations and variable
 #define INCHAR 0
@@ -29,7 +29,7 @@ uint8_t clearIdx = 0;
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
-uint32_t testColor = 0b00000000000011110000000000000000; //Red
+uint32_t testColor = 0b00000000001111110000000000000000; //Red
 
 uint8_t colTracker = 0;
 uint8_t rawLen = 48;
@@ -192,15 +192,15 @@ uint8_t chrBuf[5] = { 0, 0, 0, 0, 0 };
 // Parameter 3 = pixel type flags, add together as needed:
 //   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
+//   NEO_GRB     Pixels are wired for GRB bitstreamweak (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip0 = Adafruit_NeoPixel(35, 6, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(35, 19, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(35, 18, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip0 = Adafruit_NeoPixel(35, 14, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(35, 15, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(35, 16, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(35, 17, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel strip4 = Adafruit_NeoPixel(35, 16, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel strip5 = Adafruit_NeoPixel(35, 15, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel strip6 = Adafruit_NeoPixel(35, 14, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip4 = Adafruit_NeoPixel(35, 18, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip5 = Adafruit_NeoPixel(35, 19, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip6 = Adafruit_NeoPixel(35, 6, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(9600);
