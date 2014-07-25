@@ -440,7 +440,10 @@ void pushColumn(uint8_t newColumn) {
 
 void loadStockMsg(void) {
   for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
-    if (*(msgPointers[stockMsgTracker] + i) == 0) { break; }
+    if (*(msgPointers[stockMsgTracker] + i) == 0) { 
+      msgBuffer[i] = 0; //zero terminate the string  
+      break;
+    }
     else { msgBuffer[i] = *(msgPointers[stockMsgTracker] + i); }
   }
 }
