@@ -239,10 +239,7 @@ void setup() {
   }
   
   //load first message
-  for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
-    if (*(msgPointers[0] + i) == 0) { break; }
-    else { msgBuffer[i] = *(msgPointers[0] + i); }
-  }
+  loadStockMsg();
   
   //Set the column shift timer for the first time
   alarm = millis() + DELAY;
@@ -441,4 +438,10 @@ void pushColumn(uint8_t newColumn) {
   } 
 }
 
+void loadStockMsg(void) {
+  for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
+    if (*(msgPointers[stockMsgTracker] + i) == 0) { break; }
+    else { msgBuffer[i] = *(msgPointers[stockMsgTracker] + i); }
+  }
+}
 
