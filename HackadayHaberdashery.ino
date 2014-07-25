@@ -34,9 +34,9 @@ uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatev
 uint8_t clearIdx = 0;
 
 //Stock messages
-uint8_t message0[] = { "Hackaday.com" };
-uint8_t message1[] = { "Hack this hat: SSID: HackadayHat" };
-uint8_t message2[] = { "Break it; build it better"};
+uint8_t message0[] = { "Hackaday" };
+uint8_t message1[] = { "WS2812" };
+uint8_t message2[] = { "Bacon"};
 #define MSGCOUNT 3
 uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
@@ -255,6 +255,7 @@ void loop() {
         
 
         // say what you got:
+        /*
         Serial.print("I received: ");
         Serial.println(incomingByte, DEC);
         readFont(incomingByte);
@@ -263,6 +264,7 @@ void loop() {
         Serial.println(chrBuf[2],HEX);
         Serial.println(chrBuf[3],HEX);
         Serial.println(chrBuf[4],HEX);
+        */
         
         //Only overwrite the message buffer if a serial message is not currently scrolling
         if (!serialMsgScrolling) {
@@ -342,7 +344,7 @@ void loop() {
           }
           //repeat tracker for custom messages
           else if (serialMsgScrolling) {
-            if (msgRepeat-- <= 0) {
+            if (--msgRepeat <= 0) {
               loadStockMsg(); //reload a stock message
               serialMsgScrolling = false;
               //Reset Color
@@ -352,8 +354,8 @@ void loop() {
           }
           //repeat tracker for stock messages
           else {
-            if (msgRepeat-- <= 0) {
-              if(stockMsgTracker++ > MSGCOUNT) { stockMsgTracker = 0; }
+            if (--msgRepeat <= 0) {
+              if(++stockMsgTracker >= MSGCOUNT) { stockMsgTracker = 0; }
               loadStockMsg();
             }
           }
@@ -370,7 +372,7 @@ void loop() {
         
         //Set state for next loop
         msgState = INCHAR;
-    
+        
 
     }
   
