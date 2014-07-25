@@ -15,7 +15,7 @@ uint32_t alarm;
 #define NEXTCHAR 3
 uint8_t msgState = NEXTCHAR;
 #define STANDARDREPEAT 3
-uint8_t msgRepeat = 0;
+int8_t msgRepeat = 0;
 uint8_t stockMsgTracker = 0;
 
 
@@ -340,14 +340,21 @@ void loop() {
             serialMsgScrolling = true;
             serialMsgReady = false;
           }
+          //repeat tracker for custom messages
           else if (serialMsgScrolling) {
-            if (msgRepeat-- == 0) {
-              msgBuffer[0] = 88;
-              msgBuffer[1] = 0;
+            if (msgRepeat-- <= 0) {
+              loadStockMsg(); //reload a stock message
               serialMsgScrolling = false;
               //Reset Color
               curColor = STOCKCOLOR;
               //TODO: Load message from RAM
+            }
+          }
+          //repeat tracker for stock messages
+          else {
+            if (msgRepeat-- <= 0) {
+              if(stockMsgTracker++ > MSGCOUNT) { stockMsgTracker = 0; }
+              loadStockMsg();
             }
           }
         }
@@ -439,6 +446,7 @@ void pushColumn(uint8_t newColumn) {
 }
 
 void loadStockMsg(void) {
+  msgRepeat = STANDARDREPEAT;
   for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
     if (*(msgPointers[stockMsgTracker] + i) == 0) { 
       msgBuffer[i] = 0; //zero terminate the string  
