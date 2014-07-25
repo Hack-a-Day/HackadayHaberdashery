@@ -17,18 +17,26 @@ uint8_t msgState = NEXTCHAR;
 #define STANDARDREPEAT 3
 uint8_t msgRepeat = 0;
 
+
+
 //Message variables
 boolean serialMsgReady = false;  //A message was received over serial
 boolean serialMsgScrolling = false; //A message received over serial is currently being displayed
 uint8_t serialMsgIdx = 0;
 uint8_t msgLen = 11; // How many letters in the message (may not need this if zero terminated)
-#define MSGCUSTOMARRAYLEN 20
-uint8_t msgBuffer[MSGCUSTOMARRAYLEN] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the currently scrolling message (zero terminated)
-uint8_t msgCustom[MSGCUSTOMARRAYLEN] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }; //Stores incoming custom messages
+#define MSGCUSTOMARRAYLEN 40
+uint8_t msgBuffer[MSGCUSTOMARRAYLEN] = { 66, 97, 99, 111, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //Stores the currently scrolling message (zero terminated)
+uint8_t msgCustom[MSGCUSTOMARRAYLEN] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Stores incoming custom messages
 uint8_t msgIdx = 0; //Which letter are we on?
 uint8_t chrIdx = 0; //WHich column of this letter's font are we on?
 uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
 uint8_t clearIdx = 0;
+
+//Stock messages
+uint8_t message0[] = { "Hackaday.com" };
+uint8_t message1[] = { "Hack this hat: SSID: HackadayHat" };
+uint8_t message2[] = { "Break it; build it better"};
+
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
