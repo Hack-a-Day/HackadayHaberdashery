@@ -16,6 +16,7 @@ uint32_t alarm;
 uint8_t msgState = NEXTCHAR;
 #define STANDARDREPEAT 3
 uint8_t msgRepeat = 0;
+uint8_t stockMsgTracker = 0;
 
 
 
@@ -36,6 +37,8 @@ uint8_t clearIdx = 0;
 uint8_t message0[] = { "Hackaday.com" };
 uint8_t message1[] = { "Hack this hat: SSID: HackadayHat" };
 uint8_t message2[] = { "Break it; build it better"};
+#define MSGCOUNT 3
+uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
 
 #define BUFFERLEN 35
@@ -233,6 +236,12 @@ void setup() {
   //fill buffer with nothing
   for (uint8_t i = 0; i<BUFFERLEN; i++) {
       buffer[i] = 0b00000000;
+  }
+  
+  //load first message
+  for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
+    if (*(msgPointers[0] + i) == 0) { break; }
+    else { msgBuffer[i] = *(msgPointers[0] + i); }
   }
   
   //Set the column shift timer for the first time
