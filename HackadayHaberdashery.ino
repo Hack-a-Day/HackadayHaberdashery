@@ -43,10 +43,20 @@ uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
-#define STOCKCOLOR 0b00000000001111110000000000000000
 #define CUSTOMCOLOR 0b00000000000000000011111100000000
-uint32_t curColor = STOCKCOLOR;
-
+#define COLORSINPALETTE 7
+//We never want more than 0xAA total intensity
+uint32_t colorsLow[8] = {
+  0xAA0000, // red
+  0x00AA00, // green
+  0x0000AA, // blue
+  0x555500, // yellow
+  0x550055, // magenta
+  0x005555, // cyan
+  0x383838  // white
+};
+uint8_t stockColor = 0;  //index for pulling rotating stock colors
+uint32_t curColor = colorsLow[stockColor];
 
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
@@ -240,9 +250,7 @@ void loop() {
     //Reset the alarm for next time
     alarm = millis() + DELAY;
     
-    //TODO: msgRepeat
-
-    
+    //State machine for handling message rotation and display behavior    
     switch(msgState) {
       case INCHAR:
         //Are we in the middle of a character?
@@ -296,7 +304,7 @@ void loop() {
               loadStockMsg(); //reload a stock message
               serialMsgScrolling = false;
               //Reset Color
-              curColor = STOCKCOLOR;
+              curColor = colorsLow[stockColor];
               //TODO: Load message from RAM
             }
           }
@@ -384,7 +392,12 @@ void pushColumn(uint8_t newColumn) {
 }
 
 void loadStockMsg(void) {
+  //Set the repeat counter
   msgRepeat = STANDARDREPEAT;
+  //Rotate stock colors
+  if (++stockColor >= COLORSINPALETTE) { stockColor = 0; }
+  curColor = colorsLow[stockColor];
+  
   for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
     if (*(msgPointers[stockMsgTracker] + i) == 0) { 
       msgBuffer[i] = 0; //zero terminate the string  
