@@ -47,58 +47,6 @@ uint8_t buffer[BUFFERLEN];
 #define CUSTOMCOLOR 0b00000000000000000011111100000000
 uint32_t curColor = STOCKCOLOR;
 
-uint8_t colTracker = 0;
-uint8_t rawLen = 48;
-uint8_t rawString[] = 
-    {
-    0b01111111,
-    0b00001000,
-    0b00001000,
-    0b01111111,
-    0b00000000,
-    0b01111110,
-    0b00010001,
-    0b00010001,
-    0b01111110,
-    0b00000000,
-    0b00111110,
-    0b01000001,
-    0b01000001,
-    0b00100010,
-    0b00000000,
-    0b01111111,
-    0b00010100,
-    0b00100010,
-    0b01000001,
-    0b00000000,
-    0b01111110,
-    0b00010001,
-    0b00010001,
-    0b01111110,
-    0b00000000,
-    0b01111111,
-    0b01000001,
-    0b01000001,
-    0b00111110,
-    0b00000000,
-    0b01111110,
-    0b00010001,
-    0b00010001,
-    0b01111110,
-    0b00000000,
-    0b00000111,
-    0b00001000,
-    0b01110000,
-    0b00001000,
-    0b00000111,
-    0b00000000,
-    0b00000000,
-    0b00000000,
-    0b00000000,
-    0b00000000,
-    0b00000000,
-    0b00000000
-    };
 
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
@@ -378,22 +326,10 @@ void loop() {
   
     //Shift all columns and add a new one to the beginning
     pushColumn(nextCol);
-    
-    //Increment the tracking
-    if (++colTracker >= rawLen) { colTracker = 0; }
 
   }
 }
 
-// Cascade a pixel down the row
-void cascade(Adafruit_NeoPixel strip, uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    if (i > 0) { strip.setPixelColor(i-1, strip.Color(0, 0, 0)); }
-      strip.setPixelColor(i, c);
-      strip.show();
-      delay(wait);
-  }
-}
 
 void latch(void) {
   //Latch all strips:
