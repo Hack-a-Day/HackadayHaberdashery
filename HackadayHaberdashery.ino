@@ -55,7 +55,7 @@ uint32_t colorsLow[8] = {
   0x005555, // cyan
   0x383838  // white
 };
-uint8_t stockColor = 0;  //index for pulling rotating stock colors
+uint8_t stockColor = COLORSINPALETTE;  //index for pulling rotating stock colors
 uint32_t curColor = colorsLow[stockColor];
 
 //Font file doesn't use RAM
