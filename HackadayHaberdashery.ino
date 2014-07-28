@@ -64,6 +64,12 @@ uint32_t colorsLow[8] = {
 uint8_t stockColor = COLORSINPALETTE;  //index for pulling rotating stock colors
 uint32_t curColor = colorsLow[stockColor];
 
+//PACMAN variables
+int8_t blinkyStart;
+int8_t blinkyEye;
+int8_t pacmanStart;
+#define BLINKYEYESPACING 3
+
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
   0x00, 0x00, 0x00, 0x00, 0x00,// (space)
@@ -368,12 +374,17 @@ void readFont(uint8_t letter) {
   chrBuf[4] = pgm_read_byte_near(font5x8 + (5 *(letter-32)) + 4);
 }
 
-void pushColumn(uint8_t newColumn) {
-  
-  //Shift the framebuffer
+//Shift the framebuffer by one column
+void shiftBuffer(void) {
   for (uint8_t i=BUFFERLEN-1; i>0; i--) {
       buffer[i] = buffer[i-1];
   }
+}
+
+void pushColumn(uint8_t newColumn) {
+  
+  //Shift the framebuffer
+  shiftBuffer();
   
   //Fill the initial column
   buffer[0] = newColumn;
@@ -395,6 +406,18 @@ void pushColumn(uint8_t newColumn) {
       if (1<<6 & buffer[i]) { strip6.setPixelColor(i,curColor); }
       else { strip6.setPixelColor(i,0); }
   } 
+}
+
+void initPacman(void) {
+  
+}
+
+void pacman(void) {
+ //Shift framebuffer
+ //Add new column data
+ //Redraw animation data as needed
+ //Loop through pixel pushing and change colors as needed
+ //TODO: Add tracking for repeats and get regular program back on track 
 }
 
 void loadStockMsg(void) {
