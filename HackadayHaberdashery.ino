@@ -71,7 +71,7 @@ int8_t pacmanStart = -1;
 #define BLINKYSTART -11
 #define BLINKYEYEONE -13
 #define BLINKYEYETWO -15
-#define PACMANCOLOR 0x555500
+#define PACMANCOLOR 0x664400
 #define BLINKYCOLOR 0xAA0000
 
 //Font file doesn't use RAM
@@ -431,11 +431,31 @@ void pacman(void) {
   ++pacmanStart;
   //Add new column data
   curColor = BLINKYCOLOR;
-  if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman0[pacmanStart]; }
-  else if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
+  //if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman2[pacmanStart]; }
+  if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
   else { nextCol = 0; }
-  
+/*  
+  2  4  6  8
+  10 12 14 16
+  18 20 22 24
+*/  
   //Redraw animation data as needed
+  if (((pacmanStart+6) % 8 == 0) || ((pacmanStart+2) % 8 == 0)) {
+    for (uint8_t i = 0; i<7; i++) {
+      if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman1[6-i]; }
+    } 
+  }
+  else if ((pacmanStart+4) % 8 == 0)  {
+    for (uint8_t i = 0; i<7; i++) {
+      if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman0[6-i]; }
+    }
+  }
+  else if ((pacmanStart) % 8 == 0) {
+    for (uint8_t i = 0; i<7; i++) {
+      if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman2[6-i]; }
+    }
+  } 
+  
   //Loop through pixel pushing and change colors as needed
 
   //TODO: Add tracking for repeats and get regular program back on track 
