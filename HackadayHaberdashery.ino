@@ -12,8 +12,10 @@ uint32_t alarm;
 #define INCHAR 0
 #define INSPACE 1
 #define COLCLEAR 2
-#define NEXTCHAR 3
-uint8_t msgState = NEXTCHAR;
+#define PACMAN 3
+#define NEXTCHAR 4
+//uint8_t msgState = NEXTCHAR;
+uint8_t msgState = PACMAN;
 #define STANDARDREPEAT 3
 int8_t msgRepeat = 0;
 uint8_t stockMsgTracker = 0;
@@ -41,7 +43,7 @@ static const uint8_t PROGMEM message2[] = { "Bacon"};
 static const uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
 //Animations
-uint8_t blinky[] = { 0x7c, 0x3e, 0x7f, 0x3f, 0x7f, 0x1e, 0x7c };
+uint8_t blinky[] = { 0x7c, 0x3e, 0x7f, 0x3f, 0x7f, 0x3e, 0x7c };
 uint8_t pacman0[] = { 0x1c, 0x3e, 0x7f, 0x7f, 0x7f, 0x3e, 0x1c };
 uint8_t pacman1[] = { 0x00, 0x22, 0x77, 0x7f, 0x7f, 0x3e, 0x1c };
 uint8_t pacman2[] = { 0x00, 0x00, 0x41, 0x63, 0x77, 0x3e, 0x1c };
@@ -65,10 +67,10 @@ uint8_t stockColor = COLORSINPALETTE;  //index for pulling rotating stock colors
 uint32_t curColor = colorsLow[stockColor];
 
 //PACMAN variables
-int8_t blinkyStart;
-int8_t blinkyEye;
-int8_t pacmanStart;
-#define BLINKYEYESPACING 3
+int8_t pacmanStart = -1;
+#define BLINKYSTART -11
+#define BLINKYEYEONE -13
+#define BLINKYEYETWO -15
 
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
@@ -294,6 +296,11 @@ void loop() {
         }
         break;
         
+      case PACMAN:
+        alarm = millis() + 250;
+        pacman();
+        break;
+        
       default:
         //Otherwise go to the next letter
         
@@ -328,6 +335,7 @@ void loop() {
             }
           }
         }
+        
         
         //Load next character from font
         readFont(msgBuffer[msgIdx++]);
@@ -413,11 +421,16 @@ void initPacman(void) {
 }
 
 void pacman(void) {
- //Shift framebuffer
- //Add new column data
- //Redraw animation data as needed
- //Loop through pixel pushing and change colors as needed
- //TODO: Add tracking for repeats and get regular program back on track 
+  ++pacmanStart;
+  //Add new column data
+  if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman0[pacmanStart]; }
+  else if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
+  else { nextCol = 0; }
+  
+  //Redraw animation data as needed
+  //Loop through pixel pushing and change colors as needed
+
+  //TODO: Add tracking for repeats and get regular program back on track 
 }
 
 void loadStockMsg(void) {
