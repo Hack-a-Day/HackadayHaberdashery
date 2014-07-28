@@ -71,6 +71,8 @@ int8_t pacmanStart = -1;
 #define BLINKYSTART -11
 #define BLINKYEYEONE -13
 #define BLINKYEYETWO -15
+#define PACMANCOLOR 0x555500
+#define BLINKYCOLOR 0xAA0000
 
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
@@ -397,22 +399,27 @@ void pushColumn(uint8_t newColumn) {
   //Fill the initial column
   buffer[0] = newColumn;
   
-   //push data to pixels (will latch next loop)
+  //push data to pixels (will latch next loop)
   for (uint8_t i=0; i<BUFFERLEN; i++) {
-      if (1<<0 & buffer[i]) { strip0.setPixelColor(i,curColor); }
-      else { strip0.setPixelColor(i,0); }
-      if (1<<1 & buffer[i]) { strip1.setPixelColor(i,curColor); }
-      else { strip1.setPixelColor(i,0); }
-      if (1<<2 & buffer[i]) { strip2.setPixelColor(i,curColor); }
-      else { strip2.setPixelColor(i,0); }
-      if (1<<3 & buffer[i]) { strip3.setPixelColor(i,curColor); }
-      else { strip3.setPixelColor(i,0); }
-      if (1<<4 & buffer[i]) { strip4.setPixelColor(i,curColor); }
-      else { strip4.setPixelColor(i,0); }
-      if (1<<5 & buffer[i]) { strip5.setPixelColor(i,curColor); }
-      else { strip5.setPixelColor(i,0); }
-      if (1<<6 & buffer[i]) { strip6.setPixelColor(i,curColor); }
-      else { strip6.setPixelColor(i,0); }
+      //Colors for animations
+    if (msgState == PACMAN) {
+      if ((i <= pacmanStart) && (i > pacmanStart - 7)) { curColor = PACMANCOLOR; }   
+    }
+    
+    if (1<<0 & buffer[i]) { strip0.setPixelColor(i,curColor); }
+    else { strip0.setPixelColor(i,0); }
+    if (1<<1 & buffer[i]) { strip1.setPixelColor(i,curColor); }
+    else { strip1.setPixelColor(i,0); }
+    if (1<<2 & buffer[i]) { strip2.setPixelColor(i,curColor); }
+    else { strip2.setPixelColor(i,0); }
+    if (1<<3 & buffer[i]) { strip3.setPixelColor(i,curColor); }
+    else { strip3.setPixelColor(i,0); }
+    if (1<<4 & buffer[i]) { strip4.setPixelColor(i,curColor); }
+    else { strip4.setPixelColor(i,0); }
+    if (1<<5 & buffer[i]) { strip5.setPixelColor(i,curColor); }
+    else { strip5.setPixelColor(i,0); }
+    if (1<<6 & buffer[i]) { strip6.setPixelColor(i,curColor); }
+    else { strip6.setPixelColor(i,0); }
   } 
 }
 
@@ -423,6 +430,7 @@ void initPacman(void) {
 void pacman(void) {
   ++pacmanStart;
   //Add new column data
+  curColor = BLINKYCOLOR;
   if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman0[pacmanStart]; }
   else if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
   else { nextCol = 0; }
