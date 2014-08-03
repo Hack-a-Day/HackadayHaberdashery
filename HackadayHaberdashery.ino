@@ -401,7 +401,8 @@ void pushColumn(uint8_t newColumn) {
   
   //push data to pixels (will latch next loop)
   for (uint8_t i=0; i<BUFFERLEN; i++) {
-      //Colors for animations
+    
+    //Colors for Pacman animations
     if (msgState == PACMAN) {
       //Normally we want blinky's color
       curColor = BLINKYCOLOR;
@@ -413,7 +414,9 @@ void pushColumn(uint8_t newColumn) {
     else { strip0.setPixelColor(i,0); }
     if (1<<1 & buffer[i]) { strip1.setPixelColor(i,curColor); }
     else { strip1.setPixelColor(i,0); }
-    if (1<<2 & buffer[i]) { strip2.setPixelColor(i,curColor); }
+    //Dirty hack to draw Blinky's white eyes
+    if ((msgState == PACMAN) && ((i == pacmanStart + BLINKYSTART - 2) || (i == pacmanStart + BLINKYSTART-4))) {strip2.setPixelColor(i,colorsLow[6]);}
+    else if (1<<2 & buffer[i]) { strip2.setPixelColor(i,curColor); }
     else { strip2.setPixelColor(i,0); }
     if (1<<3 & buffer[i]) { strip3.setPixelColor(i,curColor); }
     else { strip3.setPixelColor(i,0); }
