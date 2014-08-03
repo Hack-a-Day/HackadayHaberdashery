@@ -67,7 +67,8 @@ uint8_t stockColor = COLORSINPALETTE;  //index for pulling rotating stock colors
 uint32_t curColor = colorsLow[stockColor];
 
 //PACMAN variables
-int8_t pacmanStart = -1;
+#define PACMANSTDSTART -1
+int8_t pacmanStart = PACMANSTDSTART;
 #define BLINKYSTART -11
 #define BLINKYEYEONE -13
 #define BLINKYEYETWO -15
@@ -299,7 +300,6 @@ void loop() {
         break;
         
       case PACMAN:
-        alarm = millis() + 250;
         pacman();
         break;
         
@@ -434,8 +434,12 @@ void pacman(void) {
   //Increment the counter -- exit if we've overflowed
   if (++pacmanStart >= MSGCUSTOMARRAYLEN-BLINKYSTART+6) {
     //TODO: Enable a repeat counter
-    msgState = NEXTCHAR;
-    return;
+    //Check Repeat:
+    if (--msgRepeat <= 0) {
+      msgState = NEXTCHAR;
+      return;
+    }
+    else { pacmanStart = PACMANSTDSTART; }
   }
 
   //Add new column data
