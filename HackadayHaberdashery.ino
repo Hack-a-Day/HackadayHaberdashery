@@ -14,11 +14,11 @@ uint32_t alarm;
 #define COLCLEAR 2
 #define PACMAN 3
 #define NEXTCHAR 4
-//uint8_t msgState = NEXTCHAR;
-uint8_t msgState = PACMAN;
+uint8_t msgState = NEXTCHAR;
+//uint8_t msgState = PACMAN;
 #define STANDARDREPEAT 3
 int8_t msgRepeat = 0;
-uint8_t stockMsgTracker = 0;
+uint8_t stockMsgTracker = 2;
 
 
 
@@ -326,13 +326,17 @@ void loop() {
               serialMsgScrolling = false;
               //Reset Color
               curColor = colorsLow[stockColor];
-              //TODO: Load message from RAM
             }
           }
           //repeat tracker for stock messages
           else {
             if (--msgRepeat <= 0) {
-              if(++stockMsgTracker >= MSGCOUNT) { stockMsgTracker = 0; }
+              if(++stockMsgTracker >= MSGCOUNT) {
+                //Get ready for message after animation
+                stockMsgTracker = 0;
+                msgState = PACMAN;
+                break;
+                }
               loadStockMsg();
             }
           }
@@ -436,7 +440,6 @@ void initPacman(void) {
 void pacman(void) {
   //Increment the counter -- exit if we've overflowed
   if (++pacmanStart >= MSGCUSTOMARRAYLEN-BLINKYSTART+6) {
-    //TODO: Enable a repeat counter
     //Check Repeat:
     if (--msgRepeat <= 0) {
       msgState = NEXTCHAR;
@@ -472,10 +475,6 @@ void pacman(void) {
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman2[6-i]; }
     }
   } 
-  
-  //Loop through pixel pushing and change colors as needed
-
-  //TODO: Add tracking for repeats and get regular program back on track 
 }
 
 void loadStockMsg(void) {
