@@ -37,8 +37,8 @@ uint8_t clearIdx = 0;
 
 //Stock messages
 static const uint8_t PROGMEM message0[] = { "Hackaday" };
-static const uint8_t PROGMEM message1[] = { "WS2812" };
-static const uint8_t PROGMEM message2[] = { "Bacon"};
+static const uint8_t PROGMEM message1[] = { "WiFi Hat" };
+static const uint8_t PROGMEM message2[] = { "DEFCON"};
 #define MSGCOUNT 3
 static const uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
