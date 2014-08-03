@@ -14,8 +14,9 @@ uint32_t alarm;
 #define COLCLEAR 2
 #define PACMAN 3
 #define NEXTCHAR 4
-uint8_t msgState = NEXTCHAR;
-//uint8_t msgState = PACMAN;
+#define SCANNER 5
+//uint8_t msgState = NEXTCHAR;
+uint8_t msgState = SCANNER;
 #define STANDARDREPEAT 3
 int8_t msgRepeat = STANDARDREPEAT;
 uint8_t stockMsgTracker = 0;
@@ -299,6 +300,10 @@ void loop() {
         pacman();
         break;
         
+      case SCANNER:
+        larsonScanner();
+        break;
+        
       default:   //This is where NEXTCHAR is executed (it doesn't have a "case" entry
         //Otherwise go to the next letter
         
@@ -358,7 +363,7 @@ void loop() {
     }
   
     //Shift all columns and add a new one to the beginning
-    pushColumn(nextCol);
+    if (msgState != SCANNER) { pushColumn(nextCol); }
 
   }
 }
@@ -432,7 +437,37 @@ void pushColumn(uint8_t newColumn) {
   } 
 }
 
-void initPacman(void) {
+int8_t livePixel = 0;
+int8_t scanDirection = 1;
+#define SCANLIMIT 15
+#define SCANLOC 8
+
+void larsonScanner(void) {
+  //Draw pixel
+  strip3.setPixelColor(SCANLOC+livePixel,0xFF0000);
+  
+  //TODO: fading tail
+  if (scanDirection > 0) {
+    if (livePixel > 0) { strip3.setPixelColor(SCANLOC+livePixel-1,0xCC0000); } 
+  }
+  else {
+    if (livePixel < SCANLIMIT-1) {strip3.setPixelColor(SCANLOC+livePixel + 1, 0xCC0000); }
+  }
+  
+  //Move pixel
+  livePixel += scanDirection;
+  //Check for direction chan
+  if (livePixel < 0) {
+    scanDirection = 1;
+    livePixel = 1;
+  }
+  else if (livePixel >= SCANLIMIT) {
+    scanDirection = -1;
+    livePixel = SCANLIMIT - 2;
+  }
+    //TODO: Decrement Repeat
+      //Check for repeat underflow
+      
   
 }
 
