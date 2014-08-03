@@ -403,6 +403,8 @@ void pushColumn(uint8_t newColumn) {
   for (uint8_t i=0; i<BUFFERLEN; i++) {
       //Colors for animations
     if (msgState == PACMAN) {
+      //Normally we want blinky's color
+      curColor = BLINKYCOLOR;
       //If we're about to push a pixel for pacman change the color
       if ((i <= pacmanStart) && (i > pacmanStart - 7)) { curColor = PACMANCOLOR; }   
     }
@@ -435,9 +437,8 @@ void pacman(void) {
     msgState = NEXTCHAR;
     return;
   }
+
   //Add new column data
-  curColor = BLINKYCOLOR;
-  //if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman2[pacmanStart]; }
   if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
   else { nextCol = 0; }
 /*  
