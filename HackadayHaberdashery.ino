@@ -17,8 +17,8 @@ uint32_t alarm;
 uint8_t msgState = NEXTCHAR;
 //uint8_t msgState = PACMAN;
 #define STANDARDREPEAT 3
-int8_t msgRepeat = 0;
-uint8_t stockMsgTracker = 2;
+int8_t msgRepeat = STANDARDREPEAT;
+uint8_t stockMsgTracker = 0;
 
 
 
@@ -291,11 +291,7 @@ void loop() {
         nextCol = 0;
         if (clearIdx++ >= BUFFERLEN) {
           //Reset all variables
-          msgIdx = 0; //Which letter are we on?
-          chrIdx = 0; //WHich column of this letter's font are we on?
-          nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
-          clearIdx = 0;
-          msgState = NEXTCHAR;
+          resetMsgVars();
         }
         break;
         
@@ -303,7 +299,7 @@ void loop() {
         pacman();
         break;
         
-      default:
+      default:   //This is where NEXTCHAR is executed (it doesn't have a "case" entry
         //Otherwise go to the next letter
         
         //Check for custom message
@@ -322,6 +318,7 @@ void loop() {
           //repeat tracker for custom messages
           else if (serialMsgScrolling) {
             if (--msgRepeat <= 0) {
+              msgRepeat = STANDARDREPEAT;
               loadStockMsg(); //reload a stock message
               serialMsgScrolling = false;
               //Reset Color
@@ -331,12 +328,14 @@ void loop() {
           //repeat tracker for stock messages
           else {
             if (--msgRepeat <= 0) {
+              msgRepeat = STANDARDREPEAT;
               if(++stockMsgTracker >= MSGCOUNT) {
-                //Get ready for message after animation
-                stockMsgTracker = 0;
+                //Reset tracking variables
+                resetMsgVars();
+                //Launch animation before rolling over the message tracker
                 msgState = PACMAN;
                 break;
-                }
+              }
               loadStockMsg();
             }
           }
@@ -442,7 +441,10 @@ void pacman(void) {
   if (++pacmanStart >= MSGCUSTOMARRAYLEN-BLINKYSTART+6) {
     //Check Repeat:
     if (--msgRepeat <= 0) {
-      msgState = NEXTCHAR;
+      msgRepeat = STANDARDREPEAT;
+      resetMsgVars();
+      stockMsgTracker = 0;
+      loadStockMsg();
       return;
     }
     else { pacmanStart = PACMANSTDSTART; }
@@ -478,8 +480,6 @@ void pacman(void) {
 }
 
 void loadStockMsg(void) {
-  //Set the repeat counter
-  msgRepeat = STANDARDREPEAT;
   //Rotate stock colors
   if (++stockColor >= COLORSINPALETTE) { stockColor = 0; }
   curColor = colorsLow[stockColor];
@@ -493,3 +493,11 @@ void loadStockMsg(void) {
   }
 }
 
+void resetMsgVars(void) {
+  //Reset all variables
+  msgIdx = 0; //Which letter are we on?
+  chrIdx = 0; //WHich column of this letter's font are we on?
+  nextCol = 0; // Next column pixels (Doesn't need to be global but whatevs)
+  clearIdx = 0;
+  msgState = NEXTCHAR;
+}
