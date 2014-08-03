@@ -403,6 +403,7 @@ void pushColumn(uint8_t newColumn) {
   for (uint8_t i=0; i<BUFFERLEN; i++) {
       //Colors for animations
     if (msgState == PACMAN) {
+      //If we're about to push a pixel for pacman change the color
       if ((i <= pacmanStart) && (i > pacmanStart - 7)) { curColor = PACMANCOLOR; }   
     }
     
@@ -428,7 +429,12 @@ void initPacman(void) {
 }
 
 void pacman(void) {
-  ++pacmanStart;
+  //Increment the counter -- exit if we've overflowed
+  if (++pacmanStart >= MSGCUSTOMARRAYLEN-BLINKYSTART+6) {
+    //TODO: Enable a repeat counter
+    msgState = NEXTCHAR;
+    return;
+  }
   //Add new column data
   curColor = BLINKYCOLOR;
   //if ((pacmanStart >= 0) && (pacmanStart < 7)) { nextCol = pacman2[pacmanStart]; }
@@ -442,16 +448,19 @@ void pacman(void) {
   //Redraw animation data as needed
   if (((pacmanStart+6) % 8 == 0) || ((pacmanStart+2) % 8 == 0)) {
     for (uint8_t i = 0; i<7; i++) {
+      if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman1[6-i]; }
     } 
   }
   else if ((pacmanStart+4) % 8 == 0)  {
     for (uint8_t i = 0; i<7; i++) {
+      if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman0[6-i]; }
     }
   }
   else if ((pacmanStart) % 8 == 0) {
     for (uint8_t i = 0; i<7; i++) {
+      if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman2[6-i]; }
     }
   } 
