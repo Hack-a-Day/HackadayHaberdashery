@@ -34,11 +34,11 @@ uint8_t nextCol = 0; // Next column pixels (Doesn't need to be global but whatev
 uint8_t clearIdx = 0;
 
 //Stock messages
-uint8_t message0[] = { "Hackaday" };
-uint8_t message1[] = { "WS2812" };
-uint8_t message2[] = { "Bacon"};
+static const uint8_t PROGMEM message0[] = { "Hackaday" };
+static const uint8_t PROGMEM message1[] = { "WS2812" };
+static const uint8_t PROGMEM message2[] = { "Bacon"};
 #define MSGCOUNT 3
-uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
+static const uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
 //Animations
 uint8_t blinky[] = { 0x7c, 0x3e, 0x7f, 0x3f, 0x7f, 0x1e, 0x7c };
@@ -428,11 +428,11 @@ void loadStockMsg(void) {
   curColor = colorsLow[stockColor];
   
   for (uint8_t i=0; i<MSGCUSTOMARRAYLEN; i++) {
-    if (*(msgPointers[stockMsgTracker] + i) == 0) { 
+    if (pgm_read_byte_near(msgPointers[stockMsgTracker] + i) == 0) { 
       msgBuffer[i] = 0; //zero terminate the string  
       break;
     }
-    else { msgBuffer[i] = *(msgPointers[stockMsgTracker] + i); }
+    else { msgBuffer[i] = pgm_read_byte_near(msgPointers[stockMsgTracker] + i); }
   }
 }
 
