@@ -517,24 +517,34 @@ void pacman(void) {
   if ((pacmanStart+BLINKYSTART >= 0) && (pacmanStart+BLINKYSTART < 7)) { nextCol = blinky[(pacmanStart + BLINKYSTART)]; }
   else { nextCol = 0; }
 /*  
-  2  4  6  8
-  10 12 14 16
-  18 20 22 24
+  2  4  6  8  +6)%8 || +2)%8
+  10 12 14 16 +4)%8
+  18 20 22 24  )%8
 */  
+
+/* 1 2 3 4
+   5 6 7 8
+   9 10 11 12
+   
+   +3)%4 || +1)%4
+   +2)%4
+   )%4
+*/
+
   //Redraw animation data as needed
-  if (((pacmanStart+6) % 8 == 0) || ((pacmanStart+2) % 8 == 0)) {
+  if (((pacmanStart+3) % 4 == 0) || ((pacmanStart+1) % 4 == 0)) {
     for (uint8_t i = 0; i<7; i++) {
       if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman1[6-i]; }
     } 
   }
-  else if ((pacmanStart+4) % 8 == 0)  {
+  else if ((pacmanStart+2) % 4 == 0)  {
     for (uint8_t i = 0; i<7; i++) {
       if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman0[6-i]; }
     }
   }
-  else if ((pacmanStart) % 8 == 0) {
+  else if ((pacmanStart) % 4 == 0) {
     for (uint8_t i = 0; i<7; i++) {
       if (pacmanStart-7+i >= MSGCUSTOMARRAYLEN) { break; }
       if ((pacmanStart-6+i >= 0) && (pacmanStart-6-i < MSGCUSTOMARRAYLEN)) { buffer[pacmanStart-7+i] = pacman2[6-i]; }
