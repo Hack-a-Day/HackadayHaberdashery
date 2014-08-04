@@ -474,10 +474,19 @@ void larsonScanner(void) {
   if (livePixel < 0) {
     scanDirection = 1;
     livePixel = 1;
+    --msgRepeat;
   }
   else if (livePixel >= SCANLIMIT) {
     scanDirection = -1;
     livePixel = SCANLIMIT - 2;
+    --msgRepeat;
+  }
+  
+  if (msgRepeat <= 0) {
+    msgRepeat = STANDARDREPEAT;
+    resetMsgVars();
+    stockMsgTracker = 1;
+    loadStockMsg();
   }
     //TODO: Decrement Repeat
       //Check for repeat underflow
