@@ -452,7 +452,37 @@ void pushColumn(uint8_t newColumn) {
 }
 
 //Variables and arrays for hearts
-uint8_t hearts_red[] = {
+uint8_t heartsHalf_red[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00011111,
+  0b00001101,
+  0b00000110
+};
+
+uint8_t heartsHalf_maroon[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00100000,
+  0b00010000,
+  0b00001000
+};
+
+uint8_t heartsHalf_white[] = {
+  0b00001110,
+  0b00010001,
+  0b00100001,
+  0b01000010,
+  0b00000000,
+  0b00000010,
+  0b00000000,
+};
+
+uint8_t heartsFull_red[] = {
   0b00000110,
   0b00001111,
   0b00011111,
@@ -462,7 +492,7 @@ uint8_t hearts_red[] = {
   0b00000110
 };
 
-uint8_t hearts_maroon[] = {
+uint8_t heartsFull_maroon[] = {
   0b00001000,
   0b00010000,
   0b00100000,
@@ -472,14 +502,34 @@ uint8_t hearts_maroon[] = {
   0b00001000
 };
 
-uint8_t hearts_white[] = {
+uint8_t heartsFull_white[] = {
   0b00000000,
   0b00000000,
   0b00000000,
   0b00000000,
   0b00000000,
   0b00000010,
+  0b00000000
+};
+
+uint8_t heartsEmpty[] = {
   0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000 
+};
+
+uint8_t heartsEmpty_white[] = {
+  0b00001110,
+  0b00010001,
+  0b00100001,
+  0b01000010,
+  0b00100001,
+  0b00010001,
+  0b00001110
 };
 
 #define HEARTLOC 10
@@ -488,36 +538,59 @@ uint8_t hearts_white[] = {
 #define HEARTWHITE 0x0A0A0A
 uint8_t heartOffset = 0;
 uint8_t heartLocations[] = { 0, 8, 16, 24 };
+uint8_t health = 21;
+uint8_t *heartFontRed = heartsFull_red;
+uint8_t *heartFontMaroon = heartsFull_maroon;
+uint8_t *heartFontWhite = heartsFull_white;
 
 void showHearts(void) {
   //Write hearts to buffer
   for (uint8_t i=0; i<4; i++) {
     heartOffset = heartLocations[i];
+    
+    //Load "font" into heart buffer
+    if (health >= ((3-i)*10)+10) {
+    heartFontRed = heartsFull_red;
+    heartFontMaroon = heartsFull_maroon;
+    heartFontWhite = heartsFull_white;
+    }
+    else if (health <= ((3-i)*10)) {
+      //Empty heart
+      heartFontRed = heartsEmpty;
+      heartFontMaroon = heartsEmpty;
+      heartFontWhite = heartsEmpty_white;
+    }
+    else {
+      //Half heart
+      heartFontRed = heartsHalf_red;
+      heartFontMaroon = heartsHalf_maroon;
+      heartFontWhite = heartsHalf_white;
+    }
     //columns
     for (uint8_t c=0; c<7; c++) {
-      if (1<<0 & hearts_red[c]) { strip0.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<1 & hearts_red[c]) { strip1.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<2 & hearts_red[c]) { strip2.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<3 & hearts_red[c]) { strip3.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<4 & hearts_red[c]) { strip4.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<5 & hearts_red[c]) { strip5.setPixelColor(c+heartOffset,HEARTRED); }
-      if (1<<6 & hearts_red[c]) { strip6.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<0 & *(heartFontRed+c)) { strip0.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<1 & *(heartFontRed+c)) { strip1.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<2 & *(heartFontRed+c)) { strip2.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<3 & *(heartFontRed+c)) { strip3.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<4 & *(heartFontRed+c)) { strip4.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<5 & *(heartFontRed+c)) { strip5.setPixelColor(c+heartOffset,HEARTRED); }
+      if (1<<6 & *(heartFontRed+c)) { strip6.setPixelColor(c+heartOffset,HEARTRED); }
       
-      if (1<<0 & hearts_maroon[c]) { strip0.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<1 & hearts_maroon[c]) { strip1.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<2 & hearts_maroon[c]) { strip2.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<3 & hearts_maroon[c]) { strip3.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<4 & hearts_maroon[c]) { strip4.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<5 & hearts_maroon[c]) { strip5.setPixelColor(c+heartOffset,HEARTMAROON); }
-      if (1<<6 & hearts_maroon[c]) { strip6.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<0 & *(heartFontMaroon+c)) { strip0.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<1 & *(heartFontMaroon+c)) { strip1.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<2 & *(heartFontMaroon+c)) { strip2.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<3 & *(heartFontMaroon+c)) { strip3.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<4 & *(heartFontMaroon+c)) { strip4.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<5 & *(heartFontMaroon+c)) { strip5.setPixelColor(c+heartOffset,HEARTMAROON); }
+      if (1<<6 & *(heartFontMaroon+c)) { strip6.setPixelColor(c+heartOffset,HEARTMAROON); }
       
-      if (1<<0 & hearts_white[c]) { strip0.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<1 & hearts_white[c]) { strip1.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<2 & hearts_white[c]) { strip2.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<3 & hearts_white[c]) { strip3.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<4 & hearts_white[c]) { strip4.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<5 & hearts_white[c]) { strip5.setPixelColor(c+heartOffset,HEARTWHITE); }
-      if (1<<6 & hearts_white[c]) { strip6.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<0 & *(heartFontWhite+c)) { strip0.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<1 & *(heartFontWhite+c)) { strip1.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<2 & *(heartFontWhite+c)) { strip2.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<3 & *(heartFontWhite+c)) { strip3.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<4 & *(heartFontWhite+c)) { strip4.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<5 & *(heartFontWhite+c)) { strip5.setPixelColor(c+heartOffset,HEARTWHITE); }
+      if (1<<6 & *(heartFontWhite+c)) { strip6.setPixelColor(c+heartOffset,HEARTWHITE); }
     }
     
   }
