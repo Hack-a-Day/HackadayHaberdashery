@@ -15,8 +15,8 @@ uint32_t alarm;
 #define PACMAN 3
 #define NEXTCHAR 4
 #define SCANNER 5
-//uint8_t msgState = NEXTCHAR;
-uint8_t msgState = SCANNER;
+uint8_t msgState = NEXTCHAR;
+//uint8_t msgState = SCANNER;
 #define STANDARDREPEAT 3
 int8_t msgRepeat = STANDARDREPEAT;
 uint8_t stockMsgTracker = 0;
@@ -43,12 +43,18 @@ static const uint8_t PROGMEM message2[] = { "DEFCON"};
 #define MSGCOUNT 3
 static const uint8_t* msgPointers[MSGCOUNT] = { message0, message1, message2 };
 
-//Animations
+//PACMAN Animations
 uint8_t blinky[] = { 0x7c, 0x3e, 0x7f, 0x3f, 0x7f, 0x3e, 0x7c };
 uint8_t pacman0[] = { 0x1c, 0x3e, 0x7f, 0x7f, 0x7f, 0x3e, 0x1c };
 uint8_t pacman1[] = { 0x00, 0x22, 0x77, 0x7f, 0x7f, 0x3e, 0x1c };
 uint8_t pacman2[] = { 0x00, 0x00, 0x41, 0x63, 0x77, 0x3e, 0x1c };
 
+//Larson Scanner variables
+int8_t livePixel = 0;
+int8_t scanDirection = 1;
+#define SCANLIMIT 15
+#define SCANLOC 8
+#define SCANNERDELAY 40
 
 #define BUFFERLEN 35
 uint8_t buffer[BUFFERLEN];
@@ -301,6 +307,7 @@ void loop() {
         break;
         
       case SCANNER:
+        alarm = millis() + SCANNERDELAY;
         larsonScanner();
         break;
         
@@ -339,6 +346,13 @@ void loop() {
                 resetMsgVars();
                 //Launch animation before rolling over the message tracker
                 msgState = PACMAN;
+                break;
+              }
+              else if (stockMsgTracker == 1) {
+                livePixel = 0;
+                scanDirection = 1;
+                msgRepeat = 18;
+                msgState = SCANNER;
                 break;
               }
               loadStockMsg();
@@ -437,35 +451,30 @@ void pushColumn(uint8_t newColumn) {
   } 
 }
 
-int8_t livePixel = 0;
-int8_t scanDirection = 1;
-#define SCANLIMIT 15
-#define SCANLOC 8
-
 void larsonScanner(void) {
   //Draw pixel
-  strip3.setPixelColor(SCANLOC+livePixel,0xFF0000);
+  strip6.setPixelColor(SCANLOC+livePixel,0xFF0000);
   
   //TODO: fading tail
   if (scanDirection > 0) {
-    if (livePixel > 0) { strip3.setPixelColor(SCANLOC+livePixel-1,0x240000); }
+    if (livePixel > 0) { strip6.setPixelColor(SCANLOC+livePixel-1,0x240000); }
     if (livePixel == 1) { 
-      strip3.setPixelColor(SCANLOC+livePixel+1,0x070000);
-      strip3.setPixelColor(SCANLOC+livePixel+2,0x000000);
+      strip6.setPixelColor(SCANLOC+livePixel+1,0x070000);
+      strip6.setPixelColor(SCANLOC+livePixel+2,0x000000);
     }
-    if (livePixel > 1) { strip3.setPixelColor(SCANLOC+livePixel-2,0x280000); } 
-    if (livePixel > 2) { strip3.setPixelColor(SCANLOC+livePixel-3,0x070000); } 
-    if (livePixel > 3) { strip3.setPixelColor(SCANLOC+livePixel-4,0); } 
+    if (livePixel > 1) { strip6.setPixelColor(SCANLOC+livePixel-2,0x280000); } 
+    if (livePixel > 2) { strip6.setPixelColor(SCANLOC+livePixel-3,0x070000); } 
+    if (livePixel > 3) { strip6.setPixelColor(SCANLOC+livePixel-4,0); } 
   }
   else {
-    if (livePixel < SCANLIMIT-1) {strip3.setPixelColor(SCANLOC+livePixel+1, 0xCC0000); }
+    if (livePixel < SCANLIMIT-1) {strip6.setPixelColor(SCANLOC+livePixel+1, 0xCC0000); }
     if (livePixel == SCANLIMIT-2) { 
-      strip3.setPixelColor(SCANLOC+livePixel-1,0x440000);
-      strip3.setPixelColor(SCANLOC+livePixel-2,0x000000);
+      strip6.setPixelColor(SCANLOC+livePixel-1,0x440000);
+      strip6.setPixelColor(SCANLOC+livePixel-2,0x000000);
     }
-    if (livePixel < SCANLIMIT-2) { strip3.setPixelColor(SCANLOC+livePixel+2,0x880000); } 
-    if (livePixel < SCANLIMIT-3) { strip3.setPixelColor(SCANLOC+livePixel+3,0x440000); } 
-    if (livePixel < SCANLIMIT-4) { strip3.setPixelColor(SCANLOC+livePixel+4,0); } 
+    if (livePixel < SCANLIMIT-2) { strip6.setPixelColor(SCANLOC+livePixel+2,0x880000); } 
+    if (livePixel < SCANLIMIT-3) { strip6.setPixelColor(SCANLOC+livePixel+3,0x440000); } 
+    if (livePixel < SCANLIMIT-4) { strip6.setPixelColor(SCANLOC+livePixel+4,0); } 
   }
   
   //Move pixel
@@ -487,11 +496,7 @@ void larsonScanner(void) {
     resetMsgVars();
     stockMsgTracker = 1;
     loadStockMsg();
-  }
-    //TODO: Decrement Repeat
-      //Check for repeat underflow
-      
-  
+  }  
 }
 
 void pacman(void) {
