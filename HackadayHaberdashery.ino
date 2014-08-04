@@ -82,8 +82,98 @@ int8_t pacmanStart = PACMANSTDSTART;
 #define PACMANCOLOR 0x664400
 #define BLINKYCOLOR 0xAA0000
 
+//Variables and arrays for hearts
+uint8_t heartsHalf_red[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00011111,
+  0b00001101,
+  0b00000110
+};
+
+uint8_t heartsHalf_maroon[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00100000,
+  0b00010000,
+  0b00001000
+};
+
+uint8_t heartsHalf_white[] = {
+  0b00001110,
+  0b00010001,
+  0b00100001,
+  0b01000010,
+  0b00000000,
+  0b00000010,
+  0b00000000,
+};
+
+uint8_t heartsFull_red[] = {
+  0b00000110,
+  0b00001111,
+  0b00011111,
+  0b00111110,
+  0b00011111,
+  0b00001101,
+  0b00000110
+};
+
+uint8_t heartsFull_maroon[] = {
+  0b00001000,
+  0b00010000,
+  0b00100000,
+  0b01000000,
+  0b00100000,
+  0b00010000,
+  0b00001000
+};
+
+uint8_t heartsFull_white[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000010,
+  0b00000000
+};
+
+uint8_t heartsEmpty[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000 
+};
+
+uint8_t heartsEmpty_white[] = {
+  0b00001110,
+  0b00010001,
+  0b00100001,
+  0b01000010,
+  0b00100001,
+  0b00010001,
+  0b00001110
+};
 //Health variables
 #define HEALTHDELAY 6000
+#define HEARTLOC 10
+#define HEARTRED 0x330000
+#define HEARTMAROON 0x110005
+#define HEARTWHITE 0x0A0A0A
+uint8_t heartOffset = 0;
+uint8_t heartLocations[] = { 0, 8, 16, 24 };
+uint8_t health = 21;
+uint8_t *heartFontRed = heartsFull_red;
+uint8_t *heartFontMaroon = heartsFull_maroon;
+uint8_t *heartFontWhite = heartsFull_white;
 
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
@@ -258,8 +348,28 @@ void loop() {
             msgCustom[serialMsgIdx] = 0;
             //Reset index for next time
             serialMsgIdx = 0;
+            
+            //Test for health update
+            if (msgCustom[0] == 12) {
+              uint8_t tempHealth;
+              //This mesage starts with FF so it should be a health update
+              //Number should be between 0 and 50 and zero terminated
+              if (msgCustom[2] == 0) {
+                //health update is a single digit number
+                tempHealth = msgCustom[1]-48;
+
+              }
+              else {
+                //health update is a double digit number
+                tempHealth = ((msgCustom[1]-48)*10) + (msgCustom[2]-48);
+              }
+              
+              //Make sure we're within bounds (40 is the highest health can be)
+              if ((tempHealth >= 0) && (tempHealth <= 40)) { health = tempHealth; }
+              msgCustom[0] = 0; //zero terminate buffer just to be safe
+            }
             //Flag that a message is ready
-            serialMsgReady = true;
+            else  { serialMsgReady = true; }
           }
           else { msgCustom[serialMsgIdx++] = incomingByte; }
           
@@ -459,98 +569,6 @@ void pushColumn(uint8_t newColumn) {
     else { strip6.setPixelColor(i,0); }
   } 
 }
-
-//Variables and arrays for hearts
-uint8_t heartsHalf_red[] = {
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00011111,
-  0b00001101,
-  0b00000110
-};
-
-uint8_t heartsHalf_maroon[] = {
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00100000,
-  0b00010000,
-  0b00001000
-};
-
-uint8_t heartsHalf_white[] = {
-  0b00001110,
-  0b00010001,
-  0b00100001,
-  0b01000010,
-  0b00000000,
-  0b00000010,
-  0b00000000,
-};
-
-uint8_t heartsFull_red[] = {
-  0b00000110,
-  0b00001111,
-  0b00011111,
-  0b00111110,
-  0b00011111,
-  0b00001101,
-  0b00000110
-};
-
-uint8_t heartsFull_maroon[] = {
-  0b00001000,
-  0b00010000,
-  0b00100000,
-  0b01000000,
-  0b00100000,
-  0b00010000,
-  0b00001000
-};
-
-uint8_t heartsFull_white[] = {
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000010,
-  0b00000000
-};
-
-uint8_t heartsEmpty[] = {
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000,
-  0b00000000 
-};
-
-uint8_t heartsEmpty_white[] = {
-  0b00001110,
-  0b00010001,
-  0b00100001,
-  0b01000010,
-  0b00100001,
-  0b00010001,
-  0b00001110
-};
-
-#define HEARTLOC 10
-#define HEARTRED 0x330000
-#define HEARTMAROON 0x110005
-#define HEARTWHITE 0x0A0A0A
-uint8_t heartOffset = 0;
-uint8_t heartLocations[] = { 0, 8, 16, 24 };
-uint8_t health = 21;
-uint8_t *heartFontRed = heartsFull_red;
-uint8_t *heartFontMaroon = heartsFull_maroon;
-uint8_t *heartFontWhite = heartsFull_white;
 
 void showHearts(void) {
   //Write hearts to buffer
