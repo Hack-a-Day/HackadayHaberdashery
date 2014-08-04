@@ -448,13 +448,21 @@ void larsonScanner(void) {
   
   //TODO: fading tail
   if (scanDirection > 0) {
-    if (livePixel > 0) { strip3.setPixelColor(SCANLOC+livePixel-1,0xCC0000); }
-    if (livePixel > 1) { strip3.setPixelColor(SCANLOC+livePixel-2,0x880000); } 
-    if (livePixel > 2) { strip3.setPixelColor(SCANLOC+livePixel-3,0x440000); } 
+    if (livePixel > 0) { strip3.setPixelColor(SCANLOC+livePixel-1,0x240000); }
+    if (livePixel == 1) { 
+      strip3.setPixelColor(SCANLOC+livePixel+1,0x070000);
+      strip3.setPixelColor(SCANLOC+livePixel+2,0x000000);
+    }
+    if (livePixel > 1) { strip3.setPixelColor(SCANLOC+livePixel-2,0x280000); } 
+    if (livePixel > 2) { strip3.setPixelColor(SCANLOC+livePixel-3,0x070000); } 
     if (livePixel > 3) { strip3.setPixelColor(SCANLOC+livePixel-4,0); } 
   }
   else {
     if (livePixel < SCANLIMIT-1) {strip3.setPixelColor(SCANLOC+livePixel+1, 0xCC0000); }
+    if (livePixel == SCANLIMIT-2) { 
+      strip3.setPixelColor(SCANLOC+livePixel-1,0x440000);
+      strip3.setPixelColor(SCANLOC+livePixel-2,0x000000);
+    }
     if (livePixel < SCANLIMIT-2) { strip3.setPixelColor(SCANLOC+livePixel+2,0x880000); } 
     if (livePixel < SCANLIMIT-3) { strip3.setPixelColor(SCANLOC+livePixel+3,0x440000); } 
     if (livePixel < SCANLIMIT-4) { strip3.setPixelColor(SCANLOC+livePixel+4,0); } 
