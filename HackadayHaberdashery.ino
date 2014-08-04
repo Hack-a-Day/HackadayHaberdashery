@@ -82,6 +82,9 @@ int8_t pacmanStart = PACMANSTDSTART;
 #define PACMANCOLOR 0x664400
 #define BLINKYCOLOR 0xAA0000
 
+//Health variables
+#define HEALTHDELAY 6000
+
 //Font file doesn't use RAM
 static const char PROGMEM  font5x8[] = {
   0x00, 0x00, 0x00, 0x00, 0x00,// (space)
@@ -229,7 +232,6 @@ void setup() {
 
 void loop() {
   //Some serial stuff for testing (will be used eventually)
-  showHearts();
   if (Serial.available() > 0) {
         // read the incoming byte:
         incomingByte = Serial.read();
@@ -310,7 +312,7 @@ void loop() {
         alarm = millis() + SCANNERDELAY;
         larsonScanner();
         break;
-        
+               
       default:   //This is where NEXTCHAR is executed (it doesn't have a "case" entry
         //Otherwise go to the next letter
         
@@ -349,11 +351,18 @@ void loop() {
                 break;
               }
               else if (stockMsgTracker == 1) {
+                //Start the Larson Scanner
                 livePixel = 0;
                 scanDirection = 1;
                 msgRepeat = 18;
                 msgState = SCANNER;
                 break;
+              }
+              else if (stockMsgTracker == 2) {
+                //Display shell account health
+                alarm = millis() + HEALTHDELAY;
+                
+                showHearts();
               }
               loadStockMsg();
             }
@@ -595,9 +604,8 @@ void showHearts(void) {
     
   }
   latch();
-  while(1) { }
-  // 
 }
+
 void larsonScanner(void) {
   //Draw pixel
   strip6.setPixelColor(SCANLOC+livePixel,0xFF0000);
