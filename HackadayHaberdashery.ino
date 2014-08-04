@@ -229,7 +229,7 @@ void setup() {
 
 void loop() {
   //Some serial stuff for testing (will be used eventually)
-
+  showHearts();
   if (Serial.available() > 0) {
         // read the incoming byte:
         incomingByte = Serial.read();
@@ -451,6 +451,77 @@ void pushColumn(uint8_t newColumn) {
   } 
 }
 
+//Variables and arrays for hearts
+uint8_t hearts_red[] = {
+  0b00000110,
+  0b00001111,
+  0b00011111,
+  0b00111110,
+  0b00011111,
+  0b00001101,
+  0b00000110
+};
+
+uint8_t hearts_maroon[] = {
+  0b00001000,
+  0b00010000,
+  0b00100000,
+  0b01000000,
+  0b00100000,
+  0b00010000,
+  0b00001000
+};
+
+uint8_t hearts_white[] = {
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000010,
+  0b00000000,
+};
+
+#define HEARTLOC 10
+#define HEARTRED 0x330000
+#define HEARTMAROON 0x110005
+#define HEARTWHITE 0x0A0A0A
+uint8_t heartOffset = 0;
+
+void showHearts(void) {
+  //Write hearts to buffer
+  
+  //columns
+  for (uint8_t c=0; c<7; c++) {
+    if (1<<0 & hearts_red[c]) { strip0.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<1 & hearts_red[c]) { strip1.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<2 & hearts_red[c]) { strip2.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<3 & hearts_red[c]) { strip3.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<4 & hearts_red[c]) { strip4.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<5 & hearts_red[c]) { strip5.setPixelColor(c+HEARTLOC,HEARTRED); }
+    if (1<<6 & hearts_red[c]) { strip6.setPixelColor(c+HEARTLOC,HEARTRED); }
+    
+    if (1<<0 & hearts_maroon[c]) { strip0.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<1 & hearts_maroon[c]) { strip1.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<2 & hearts_maroon[c]) { strip2.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<3 & hearts_maroon[c]) { strip3.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<4 & hearts_maroon[c]) { strip4.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<5 & hearts_maroon[c]) { strip5.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    if (1<<6 & hearts_maroon[c]) { strip6.setPixelColor(c+HEARTLOC,HEARTMAROON); }
+    
+    if (1<<0 & hearts_white[c]) { strip0.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<1 & hearts_white[c]) { strip1.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<2 & hearts_white[c]) { strip2.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<3 & hearts_white[c]) { strip3.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<4 & hearts_white[c]) { strip4.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<5 & hearts_white[c]) { strip5.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    if (1<<6 & hearts_white[c]) { strip6.setPixelColor(c+HEARTLOC,HEARTWHITE); }
+    
+  }
+  latch();
+  while(1) { }
+  // 
+}
 void larsonScanner(void) {
   //Draw pixel
   strip6.setPixelColor(SCANLOC+livePixel,0xFF0000);
