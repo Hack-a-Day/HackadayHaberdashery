@@ -168,9 +168,10 @@ uint8_t heartsEmpty_white[] = {
 #define HEARTRED 0x330000
 #define HEARTMAROON 0x110005
 #define HEARTWHITE 0x0A0A0A
+#define MAXHEALTH 40
 uint8_t heartOffset = 0;
 uint8_t heartLocations[] = { 0, 8, 16, 24 };
-uint8_t health = 21;
+uint8_t health = MAXHEALTH;
 uint8_t *heartFontRed = heartsFull_red;
 uint8_t *heartFontMaroon = heartsFull_maroon;
 uint8_t *heartFontWhite = heartsFull_white;
@@ -365,7 +366,7 @@ void loop() {
               }
               
               //Make sure we're within bounds (40 is the highest health can be)
-              if ((tempHealth >= 0) && (tempHealth <= 40)) { health = tempHealth; }
+              if ((tempHealth >= 0) && (tempHealth <= MAXHEALTH)) { health = 40-MAXHEALTH; }
               msgCustom[0] = 0; //zero terminate buffer just to be safe
             }
             //Flag that a message is ready
@@ -470,8 +471,7 @@ void loop() {
               }
               else if (stockMsgTracker == 2) {
                 //Display shell account health
-                alarm = millis() + HEALTHDELAY;
-                
+                alarm = millis() + HEALTHDELAY; 
                 showHearts();
               }
               loadStockMsg();
