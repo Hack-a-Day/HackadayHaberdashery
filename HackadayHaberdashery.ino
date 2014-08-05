@@ -366,7 +366,7 @@ void loop() {
               }
               
               //Make sure we're within bounds (40 is the highest health can be)
-              if ((tempHealth >= 0) && (tempHealth <= MAXHEALTH)) { health = 40-MAXHEALTH; }
+              if ((tempHealth >= 0) && (tempHealth <= MAXHEALTH)) { health = MAXHEALTH-tempHealth; }
               msgCustom[0] = 0; //zero terminate buffer just to be safe
             }
             //Flag that a message is ready
